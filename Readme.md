@@ -5,7 +5,9 @@
 ### 环境搭建步骤
 - 安装node 
 - git clone 
-- npm install
+- npm install -g cnpm --registry=https://registry.npm.taobao.org
+- npm install -g gulp
+- npm install 或者 cnpm install
 - gulp 
 自动运行首页
 
