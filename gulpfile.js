@@ -13,19 +13,23 @@ const gulp = require('gulp'),
     del = require('del');
     sourcemaps = require('gulp-sourcemaps');
     less = require('gulp-less');
+    htmlmin = require('gulp-htmlmin');
+    webserver = require('gulp-webserver');
 
-
+    gulp.task('webserver', function() {
+        gulp.src('./')
+          .pipe(webserver({
+            livereload: true,
+            directoryListing: true,
+            open: true
+      }))
+    });
+      
 gulp.task('watch', function () {
 
-    // Create LiveReload server
-    livereload.listen();
 
-    // Watch any files in dist/, reload on change
-    gulp.watch(['dist/**']).on('change', livereload.changed);
-
-});
-
-gulp.task('watch', function () {
+    //Watch .css files
+    gulp.watch('**/*.html', ['htmlmin']);
 
     //Watch .css files
     gulp.watch('src/styles/**/*.css', ['styles-css']);
@@ -43,6 +47,25 @@ gulp.task('watch', function () {
     gulp.watch('src/images/**/*', ['images']);
 
 });
+
+
+
+gulp.task('htmlmin', function () {
+    var options = {
+        removeComments: true,//清除HTML注释
+        collapseWhitespace: true,//压缩HTML
+        collapseBooleanAttributes: true,//省略布尔属性的值 <input checked="true"/> ==> <input />
+        removeEmptyAttributes: true,//删除所有空格作属性值 <input id="" /> ==> <input />
+        removeScriptTypeAttributes: true,//删除<script>的type="text/javascript"
+        removeStyleLinkTypeAttributes: true,//删除<style>和<link>的type="text/css"
+        minifyJS: true,//压缩页面JS
+        minifyCSS: true//压缩页面CSS
+    };
+    gulp.src('src/html/*.html')
+        .pipe(htmlmin(options))
+        .pipe(gulp.dest('dist/html'));
+});
+
 
 gulp.task('styles-css', function () {
     gulp.src('src/styles/**/*.css')
@@ -65,7 +88,7 @@ gulp.task('styles-sass', function () {
         .pipe(notify({ message: 'Styles-sass task complete' }));
 });
 
-gulp.task('styles-Less', function () {
+gulp.task('styles-less', function () {
     gulp.src('src/styles/**/*.less')
         .pipe(gulp.dest('dist/styles/css'))
         .pipe(sourcemaps.init())
@@ -79,7 +102,10 @@ gulp.task('styles-Less', function () {
 
 gulp.task('scripts', function () {
     return gulp.src('src/scripts/**/*.js')
-        .pipe(jshint('.jshintrc'))
+        .pipe(jshint({
+            'undef': true,
+            'unused': true
+        }))
         .pipe(jshint.reporter('default'))
         .pipe(concat('main.js'))
         .pipe(gulp.dest('dist/scripts/js'))
@@ -98,13 +124,11 @@ gulp.task('images', function () {
 
 
 gulp.task('clean', function () {
-    return del(['dist/styles/css', 'dist/scripts/js', 'dist/images/img']);
+    return del(['dist/html', 'dist/styles/css', 'dist/scripts/js', 'dist/images/img']);
 });
 
-gulp.task('default', ['clean'], function () {
-    gulp.start('styles-css', 'styles-sass', 'styles-less', 'scripts', 'images');
+gulp.task('default', ['clean','webserver', 'watch'], function () {
+    gulp.start('htmlmin', 'styles-css', 'styles-sass', 'styles-less', 'scripts', 'images');
 });
-
-
 
 
