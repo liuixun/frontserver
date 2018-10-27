@@ -15,20 +15,31 @@ const gulp = require('gulp'),
     less = require('gulp-less');
     htmlmin = require('gulp-htmlmin');
     webserver = require('gulp-webserver');
-
-    gulp.task('webserver', function() {
-        gulp.src('./')
-          .pipe(webserver({
-            livereload: true,
-            directoryListing: true,
-            open: true
-      }))
+    tinylr = require('tiny-lr'),
+    browerSync = require('browser-sync'),
+    server = tinylr();
+    // gulp.task('webserver', function() {
+    //     gulp.src('./')
+    //       .pipe(webserver({
+    //         livereload: true,
+    //         directoryListing: true,
+    //         open: true
+    //   }))
+    // });
+   
+    gulp.task('webserver',function(){
+        browerSync({
+            server:{
+                baseDir:['./']
+            },
+            port: 8080
+        },function(err,bs){
+             console.log(bs.options.getIn(["urls", "local"]));
+        });
+    
     });
-      
-gulp.task('watch', function () {
 
-
-    //Watch .css files
+gulp.task('watch', ()=>{
     gulp.watch('**/*.html', ['htmlmin']);
 
     //Watch .css files
@@ -46,8 +57,7 @@ gulp.task('watch', function () {
     // Watch image files
     gulp.watch('src/images/**/*', ['images']);
 
-});
-
+})
 
 
 gulp.task('htmlmin', function () {
@@ -63,7 +73,10 @@ gulp.task('htmlmin', function () {
     };
     gulp.src('src/html/*.html')
         .pipe(htmlmin(options))
-        .pipe(gulp.dest('dist/html'));
+        .pipe(gulp.dest('dist/html'))
+        .pipe(browerSync.reload({
+            stream: true
+        }))
 });
 
 
@@ -73,7 +86,10 @@ gulp.task('styles-css', function () {
         .pipe(rename({ suffix: '.min' }))
         .pipe(cssnano())
         .pipe(gulp.dest('dist/styles/css'))
-        .pipe(notify({ message: 'Styles-css task complete' }));
+        .pipe(notify({ message: 'Styles-css task complete' }))
+        .pipe(browerSync.reload({
+            stream: true
+        }));
 });
 
 gulp.task('styles-sass', function () {
@@ -85,7 +101,10 @@ gulp.task('styles-sass', function () {
         .pipe(cssnano())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/styles/css'))
-        .pipe(notify({ message: 'Styles-sass task complete' }));
+        .pipe(notify({ message: 'Styles-sass task complete' }))
+        .pipe(browerSync.reload({
+            stream: true
+        }));
 });
 
 gulp.task('styles-less', function () {
@@ -97,7 +116,10 @@ gulp.task('styles-less', function () {
         .pipe(cssnano())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist/styles/css'))
-        .pipe(notify({ message: 'Styles-less task complete' }));;
+        .pipe(notify({ message: 'Styles-less task complete' }))
+        .pipe(browerSync.reload({
+            stream: true
+        }));
 });
 
 gulp.task('scripts', function () {
@@ -112,14 +134,20 @@ gulp.task('scripts', function () {
         .pipe(rename({ suffix: '.min' }))
         .pipe(uglify())
         .pipe(gulp.dest('dist/scripts/js'))
-        .pipe(notify({ message: 'Scripts task complete' }));
+        .pipe(notify({ message: 'Scripts task complete' }))
+        .pipe(browerSync.reload({
+            stream: true
+        }));
 });
 
 gulp.task('images', function () {
     return gulp.src('src/images/**/*')
         .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
         .pipe(gulp.dest('dist/images/img'))
-        .pipe(notify({ message: 'Images task complete' }));
+        .pipe(notify({ message: 'Images task complete' }))
+        .pipe(browerSync.reload({
+            stream: true
+        }));
 });
 
 

@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "browser-sync": "^2.26.3",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^6.0.0",
@@ -27,6 +28,7 @@
     "gulp-ruby-sass": "^4.0.0",
     "gulp-uglify": "^3.0.1",
     "gulp-webserver": "^0.9.1",
-    "jshint": "^2.9.6"
+    "jshint": "^2.9.6",
+    "tiny-lr": "^1.1.1"
   }
 }
